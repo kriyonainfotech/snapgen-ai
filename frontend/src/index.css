@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased;
+        font-family: var(--font-sans);
+    }
+}
+
+@layer components {
+
+    /* Glassmorphism utility */
+    .glass {
+        @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
+    }
+
+    .sidebar-link {
+        @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-600 hover:bg-slate-100;
+    }
+
+    .sidebar-link.active {
+        @apply bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700;
+    }
+}
