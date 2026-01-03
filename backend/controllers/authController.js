@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
 
-        console.log(res.cookie('token', token), "cookie");
+        console.log("Status:", res.statusCode);
 
         return res.json({ success: true, message: 'Login successful' });
     } catch (error) {
