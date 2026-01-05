@@ -17,7 +17,11 @@ const Login = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await api.post('/auth/login', { email, password });
+            const response = await api.post('/auth/login', { email, password }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
             console.log(response.data, "login response");
             navigate('/');
         } catch (err) {

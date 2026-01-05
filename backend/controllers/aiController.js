@@ -31,7 +31,6 @@ const handleApiError = (res, error, context) => {
     }
 
     if (error.request) {
-        // No response from API
         log.error(`${context} | No response from API`, error.message);
 
         return res.status(503).json({
@@ -40,7 +39,6 @@ const handleApiError = (res, error, context) => {
         });
     }
 
-    // Internal error
     log.error(`${context} | Internal Server Error`, error.message);
 
     return res.status(500).json({
@@ -153,7 +151,7 @@ exports.generateUndressVideo = async (req, res) => {
     log.info("Generate Walking Video | Request received", req.body);
 
     try {
-        const { file_url, prompt, pov_id, duration,width,height } = req.body;
+        const { file_url, prompt, pov_id, duration, width, height } = req.body;
 
         if (!file_url) {
             log.warn("Generate Walking Video | file_url missing");
@@ -167,7 +165,7 @@ exports.generateUndressVideo = async (req, res) => {
             file_url,
             prompt: prompt || "A person walking",
             width: width || 512,
-            height: height  || 680,
+            height: height || 680,
             pov_id: pov_id ?? 0,
             duration: duration || 5,
         };
