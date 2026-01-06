@@ -82,10 +82,7 @@ exports.generateUndresIimage = async (req, res) => {
         const response = await apiClient.post(url, payload);
 
         log.success("Generate Human Image | Success", response.data);
-        return res.status(200).json({
-            success: true,
-            data: response.data,
-        });
+        return res.status(200).json(response.data);
 
     } catch (error) {
         return handleApiError(res, error, "Generate Human Image");
@@ -113,10 +110,7 @@ exports.checkImageStatus = async (req, res) => {
         const response = await apiClient.post(url, { uid });
 
         log.success("Check Image Status | Success", response.data);
-        return res.status(200).json({
-            success: true,
-            data: response.data,
-        });
+        return res.status(200).json(response.data);
 
     } catch (error) {
         return handleApiError(res, error, "Check Image Status");
@@ -134,10 +128,7 @@ exports.checkCredits = async (req, res) => {
         const response = await apiClient.post(url, {});
 
         log.success("Check Credits | Success", response.data);
-        return res.status(200).json({
-            success: true,
-            data: response.data,
-        });
+        return res.status(200).json(response.data);
 
     } catch (error) {
         return handleApiError(res, error, "Check Credits");
@@ -174,10 +165,7 @@ exports.generateUndressVideo = async (req, res) => {
         const response = await apiClient.post(url, payload);
 
         log.success("Generate Walking Video | Success", response.data);
-        return res.status(200).json({
-            success: true,
-            data: response.data,
-        });
+        return res.status(200).json(response.data);
 
     } catch (error) {
         return handleApiError(res, error, "Generate Walking Video");
@@ -205,10 +193,7 @@ exports.checkVideoStatus = async (req, res) => {
         const response = await apiClient.post(url, { uid });
 
         log.success("Check Video Status | Success", response.data);
-        return res.status(200).json({
-            success: true,
-            data: response.data,
-        });
+        return res.status(200).json(response.data);
 
     } catch (error) {
         return handleApiError(res, error, "Check Video Status");

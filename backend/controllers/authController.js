@@ -3,6 +3,12 @@ const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
     try {
+        if (!req.body || !req.body.email) {
+            return res.status(400).json({
+                message: 'Invalid request',
+                error: 'Request body or email is missing'
+            });
+        }
         const { email, password } = req.body;
         const existingAdmin = await Admin.findOne({ email });
         if (existingAdmin) {
@@ -30,7 +36,7 @@ exports.login = async (req, res) => {
         console.log(token, "token");
 
         res.cookie('token', token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             maxAge: 24 * 60 * 60 * 1000 // 1 day
@@ -38,7 +44,7 @@ exports.login = async (req, res) => {
 
         console.log("Status:", res.statusCode);
 
-        return res.json({ success: true, message: 'Login successful' });
+        return res.json({ success: true, message: 'Login successful', token });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Login error', error: error.message });
     }

@@ -6,13 +6,24 @@ import { Plus, Search, Loader2 } from 'lucide-react';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
+    const [mainCategories, setMainCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [currentCategory, setCurrentCategory] = useState(null);
-    const [formData, setFormData] = useState({ title: '' });
+    const [formData, setFormData] = useState({ title: '', type: 'image', mainCategory: '' });
 
     const columns = [
         { key: 'title', label: 'Title' },
+        {
+            key: 'type',
+            label: 'Type',
+            render: (val) => (
+                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${val === 'video' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'
+                    }`}>
+                    {val}
+                </span>
+            )
+        },
         {
             key: 'createdAt',
             label: 'Created At',
@@ -39,10 +50,18 @@ const Categories = () => {
     const handleOpenModal = (category = null) => {
         if (category) {
             setCurrentCategory(category);
-            setFormData({ title: category.title });
+            setFormData({
+                title: category.title,
+                type: category.type || 'image',
+                mainCategory: category.mainCategory?._id || category.mainCategory || (mainCategories[0]?._id || '')
+            });
         } else {
             setCurrentCategory(null);
-            setFormData({ title: '' });
+            setFormData({
+                title: '',
+                type: 'image',
+                mainCategory: mainCategories[0]?._id || ''
+            });
         }
         setModalOpen(true);
     };
@@ -116,9 +135,20 @@ const Categories = () => {
                         <input
                             type="text" required
                             value={formData.title}
-                            onChange={(e) => setFormData({ title: e.target.value })}
+                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none"
                         />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Type</label>
+                        <select
+                            value={formData.type}
+                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none"
+                        >
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                        </select>
                     </div>
                     <button type="submit" className="w-full py-3 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700">
                         {currentCategory ? 'Update' : 'Create'}

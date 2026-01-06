@@ -13,7 +13,8 @@ const Subcategories = () => {
     const [formData, setFormData] = useState({
         title: '',
         prompt: '',
-        category: ''
+        category: '',
+        type: 'image'
     });
 
     const columns = [
@@ -50,20 +51,36 @@ const Subcategories = () => {
         fetchData();
     }, []);
 
-    const handleOpenModal = (sub = null) => {
+    const fetchCategoriesByType = async (type) => {
+        try {
+            const res = await api.get(`/categories/get/${type}`);
+            setCategories(res.data);
+            return res.data;
+        } catch (error) {
+            console.error('Error fetching categories by type:', error);
+            return [];
+        }
+    };
+
+    const handleOpenModal = async (sub = null) => {
         if (sub) {
+            const subType = sub.category?.type || 'image';
+            const cats = await fetchCategoriesByType(subType);
             setCurrentSub(sub);
             setFormData({
                 title: sub.title,
                 prompt: sub.prompt,
-                category: sub.category?._id || sub.category
+                category: sub.category?._id || sub.category,
+                type: subType
             });
         } else {
+            const cats = await fetchCategoriesByType('image');
             setCurrentSub(null);
             setFormData({
                 title: '',
                 prompt: '',
-                category: categories[0]?._id || ''
+                category: cats[0]?._id || '',
+                type: 'image'
             });
         }
         setModalOpen(true);
@@ -141,6 +158,25 @@ const Subcategories = () => {
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none"
                         />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Type</label>
+                        <select
+                            required
+                            value={formData.type}
+                            onChange={async (e) => {
+                                const newType = e.target.value;
+                                setFormData({ ...formData, type: newType, category: '' });
+                                const cats = await fetchCategoriesByType(newType);
+                                if (cats.length > 0) {
+                                    setFormData(prev => ({ ...prev, type: newType, category: cats[0]._id }));
+                                }
+                            }}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none"
+                        >
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                        </select>
                     </div>
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Category</label>
