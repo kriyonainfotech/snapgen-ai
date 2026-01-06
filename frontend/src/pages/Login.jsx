@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
+import Cookies from 'js-cookie';
 import { Loader2, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -23,6 +24,9 @@ const Login = () => {
                 },
             });
             console.log(response.data, "login response");
+            if (response.data.token) {
+                Cookies.set('token', response.data.token, { expires: 1 }); // 1 day
+            }
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
