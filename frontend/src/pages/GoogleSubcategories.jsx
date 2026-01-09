@@ -4,7 +4,7 @@ import DataTable from '../components/DataTable';
 import Modal from '../components/Modal';
 import { Plus, Search, Loader2 } from 'lucide-react';
 
-const Subcategories = () => {
+const GoogleSubcategories = () => {
     const [subcategories, setSubcategories] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -25,11 +25,6 @@ const Subcategories = () => {
             render: (cat) => cat?.title || 'N/A'
         },
         {
-            key: 'type',
-            label: 'Type',
-            render: (_, row) => row.category?.type || 'N/A'
-        },
-        {
             key: 'prompt',
             label: 'Prompt',
             render: (p) => <span className="truncate max-w-xs inline-block">{p}</span>
@@ -40,8 +35,8 @@ const Subcategories = () => {
         try {
             setLoading(true);
             const [subRes, catRes] = await Promise.all([
-                api.get('/subcategories/all'),
-                api.get('/categories/all')
+                api.get('/google-subcategories/all'),
+                api.get('/google-categories/all')
             ]);
             setSubcategories(subRes.data);
             setCategories(catRes.data);
@@ -58,11 +53,11 @@ const Subcategories = () => {
 
     const fetchCategoriesByType = async (type) => {
         try {
-            const res = await api.get(`/categories/get/${type}`);
+            const res = await api.get(`/google-categories/get/${type}`);
             setCategories(res.data);
             return res.data;
         } catch (error) {
-            console.error('Error fetching categories by type:', error);
+            console.error('Error fetching google categories by type:', error);
             return [];
         }
     };
@@ -95,24 +90,24 @@ const Subcategories = () => {
         e.preventDefault();
         try {
             if (currentSub) {
-                await api.put(`/subcategories/update/${currentSub._id}`, formData);
+                await api.put(`/google-subcategories/update/${currentSub._id}`, formData);
             } else {
-                await api.post('/subcategories/create', formData);
+                await api.post('/google-subcategories/create', formData);
             }
             setModalOpen(false);
             fetchData();
         } catch (error) {
-            console.error('Error saving subcategory:', error);
+            console.error('Error saving google subcategory:', error);
         }
     };
 
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure?')) {
             try {
-                await api.delete(`/subcategories/delete/${id}`);
+                await api.delete(`/google-subcategories/delete/${id}`);
                 fetchData();
             } catch (error) {
-                console.error('Error deleting subcategory:', error);
+                console.error('Error deleting google subcategory:', error);
             }
         }
     };
@@ -121,22 +116,22 @@ const Subcategories = () => {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-slate-800">Subcategories</h2>
-                    <p className="text-slate-500 mt-1 text-sm">Manage prompts and their parent categories.</p>
+                    <h2 className="text-3xl font-bold text-slate-800">Google Subcategories</h2>
+                    <p className="text-slate-500 mt-1 text-sm">Manage Google prompts and their parent categories.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
                     className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-100"
                 >
                     <Plus size={20} />
-                    Create Subcategory
+                    Create Google Subcategory
                 </button>
             </div>
 
             <div className="glass p-6 rounded-3xl space-y-6">
                 <div className="flex items-center gap-4 bg-slate-50/50 p-2 rounded-2xl w-full max-w-md border border-slate-100">
                     <Search className="text-slate-400 ml-2" size={20} />
-                    <input type="text" placeholder="Search subcategories..." className="bg-transparent border-none focus:ring-0 w-full text-sm py-2" />
+                    <input type="text" placeholder="Search google subcategories..." className="bg-transparent border-none focus:ring-0 w-full text-sm py-2" />
                 </div>
 
                 {loading ? (
@@ -153,7 +148,7 @@ const Subcategories = () => {
                 )}
             </div>
 
-            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={currentSub ? 'Edit Subcategory' : 'Create Subcategory'}>
+            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={currentSub ? 'Edit Google Subcategory' : 'Create Google Subcategory'}>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Title</label>
@@ -215,4 +210,4 @@ const Subcategories = () => {
     );
 };
 
-export default Subcategories;
+export default GoogleSubcategories;

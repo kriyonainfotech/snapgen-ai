@@ -9,7 +9,9 @@ import {
     Menu,
     Bell,
     Search,
-    LogOut
+    LogOut,
+    Smartphone,
+    ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Cookies from 'js-cookie';
@@ -47,6 +49,8 @@ const Layout = () => {
         { to: '/users', icon: Users, label: 'Users' },
         { to: '/categories', icon: Layers, label: 'Categories' },
         { to: '/subcategories', icon: Grid2X2, label: 'Subcategories' },
+        { to: '/google-categories', icon: Smartphone, label: 'Google Categories' },
+        { to: '/google-subcategories', icon: ExternalLink, label: 'Google Subcategories' },
     ];
 
     const handleLogout = () => {

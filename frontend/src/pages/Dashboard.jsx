@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
-import { Users, Layers, Grid2X2, TrendingUp, Activity, Smartphone } from 'lucide-react';
+import { Users, Layers, Grid2X2, TrendingUp, Activity, Smartphone, Coins, CreditCard } from 'lucide-react';
 
 const StatCard = ({ title, value, icon: Icon, color, trend }) => (
     <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
@@ -21,21 +21,34 @@ const StatCard = ({ title, value, icon: Icon, color, trend }) => (
 );
 
 const Dashboard = () => {
-    const [stats, setStats] = useState({ users: 0, categories: 0, subcategories: 0 });
+    const [stats, setStats] = useState({
+        users: 0,
+        categories: 0,
+        subcategories: 0,
+        credits: 0,
+        totalCoins: 0
+    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const [u, c, s] = await Promise.all([
+                const [u, c, s, cred] = await Promise.all([
                     api.get('/users/all'),
                     api.get('/categories/all'),
-                    api.get('/subcategories/all')
+                    api.get('/subcategories/all'),
+                    api.post('/ai/check-credits')
                 ]);
+
+                console.log("🚀 ~ fetchStats ~ cred:", cred.data)
+                const totalUserCoins = u.data.reduce((acc, user) => acc + (user.coins || 0), 0);
+
                 setStats({
                     users: u.data.length,
                     categories: c.data.length,
-                    subcategories: s.data.length
+                    subcategories: s.data.length,
+                    credits: cred.data.data.gems || 0,
+                    totalCoins: totalUserCoins
                 });
             } catch (err) {
                 console.error('Stats fetch error:', err);
@@ -53,7 +66,7 @@ const Dashboard = () => {
                 <p className="text-slate-500 mt-2 font-medium">Welcome back! Here's what's happening today.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <StatCard
                     title="Total Users"
                     value={loading ? '...' : stats.users}
@@ -74,6 +87,12 @@ const Dashboard = () => {
                     icon={Grid2X2}
                     color="bg-purple-50 text-purple-600"
                     trend="+"
+                />
+                <StatCard
+                    title="API Credits"
+                    value={loading ? '...' : stats.credits}
+                    icon={CreditCard}
+                    color="bg-emerald-50 text-emerald-600"
                 />
             </div>
 

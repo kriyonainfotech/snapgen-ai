@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
 import Categories from './pages/Categories';
 import Subcategories from './pages/Subcategories';
+import GoogleCategories from './pages/GoogleCategories';
+import GoogleSubcategories from './pages/GoogleSubcategories';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -21,6 +23,8 @@ function App() {
             <Route path="users" element={<Users />} />
             <Route path="categories" element={<Categories />} />
             <Route path="subcategories" element={<Subcategories />} />
+            <Route path="google-categories" element={<GoogleCategories />} />
+            <Route path="google-subcategories" element={<GoogleSubcategories />} />
           </Route>
         </Route>
 

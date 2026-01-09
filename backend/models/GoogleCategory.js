@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const CategorySchema = new mongoose.Schema({
+const GoogleCategorySchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -17,11 +17,6 @@ const CategorySchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    // mainCategory: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'MainCategory',
-    //     required: true
-    // }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Category', CategorySchema);
+module.exports = mongoose.model('GoogleCategory', GoogleCategorySchema);

@@ -3,16 +3,13 @@ import api from '../utils/api';
 import DataTable from '../components/DataTable';
 import Modal from '../components/Modal';
 import { Plus, Search, Loader2 } from 'lucide-react';
-import axios from 'axios';
-const API_BASE_URL = 'http://localhost:5000';
 
-const Categories = () => {
+const GoogleCategories = () => {
     const [categories, setCategories] = useState([]);
-    const [mainCategories, setMainCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [currentCategory, setCurrentCategory] = useState(null);
-    const [formData, setFormData] = useState({ title: '', type: 'image', mainCategory: '' });
+    const [formData, setFormData] = useState({ title: '', type: 'image' });
     const [imageFile, setImageFile] = useState(null);
 
     const columns = [
@@ -46,11 +43,10 @@ const Categories = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`${API_BASE_URL}/api/categories/all`);
-            console.log("Categories:", res.data);
+            const res = await api.get('/google-categories/all');
             setCategories(res.data);
         } catch (error) {
-            console.error('Error fetching categories:', error);
+            console.error('Error fetching google categories:', error);
         } finally {
             setLoading(false);
         }
@@ -65,15 +61,13 @@ const Categories = () => {
             setCurrentCategory(category);
             setFormData({
                 title: category.title,
-                type: category.type || 'image',
-                mainCategory: category.mainCategory?._id || category.mainCategory || (mainCategories[0]?._id || '')
+                type: category.type || 'image'
             });
         } else {
             setCurrentCategory(null);
             setFormData({
                 title: '',
-                type: 'image',
-                mainCategory: mainCategories[0]?._id || ''
+                type: 'image'
             });
         }
         setImageFile(null);
@@ -88,34 +82,31 @@ const Categories = () => {
             data.append('type', formData.type);
             if (imageFile) {
                 data.append('image', imageFile);
-                console.log('Image file:', imageFile);
             }
 
             if (currentCategory) {
-                const response = await axios.put(`${API_BASE_URL}/api/categories/update/${currentCategory._id}`, data, {
+                await api.put(`/google-categories/update/${currentCategory._id}`, data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                console.log("Response:", response.data);
             } else {
-                const response = await axios.post(`${API_BASE_URL}/api/categories/create`, data, {
+                await api.post('/google-categories/create', data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                console.log("Response:", response.data);
             }
             setModalOpen(false);
             fetchCategories();
         } catch (error) {
-            console.error('Error saving category:', error);
+            console.error('Error saving google category:', error);
         }
     };
 
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure?')) {
             try {
-                await api.delete(`/categories/delete/${id}`);
+                await api.delete(`/google-categories/delete/${id}`);
                 fetchCategories();
             } catch (error) {
-                console.error('Error deleting category:', error);
+                console.error('Error deleting google category:', error);
             }
         }
     };
@@ -124,22 +115,22 @@ const Categories = () => {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-slate-800">Categories</h2>
-                    <p className="text-slate-500 mt-1 text-sm">Organize prompts into categories.</p>
+                    <h2 className="text-3xl font-bold text-slate-800">Google Categories</h2>
+                    <p className="text-slate-500 mt-1 text-sm">Organize Google prompts into categories.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
                     className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-100"
                 >
                     <Plus size={20} />
-                    Create Category
+                    Create Google Category
                 </button>
             </div>
 
             <div className="glass p-6 rounded-3xl space-y-6">
                 <div className="flex items-center gap-4 bg-slate-50/50 p-2 rounded-2xl w-full max-w-md border border-slate-100">
                     <Search className="text-slate-400 ml-2" size={20} />
-                    <input type="text" placeholder="Search categories..." className="bg-transparent border-none focus:ring-0 w-full text-sm py-2" />
+                    <input type="text" placeholder="Search google categories..." className="bg-transparent border-none focus:ring-0 w-full text-sm py-2" />
                 </div>
 
                 {loading ? (
@@ -156,7 +147,7 @@ const Categories = () => {
                 )}
             </div>
 
-            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={currentCategory ? 'Edit Category' : 'Create Category'}>
+            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={currentCategory ? 'Edit Google Category' : 'Create Google Category'}>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Title</label>
@@ -202,4 +193,4 @@ const Categories = () => {
     );
 };
 
-export default Categories;
+export default GoogleCategories;

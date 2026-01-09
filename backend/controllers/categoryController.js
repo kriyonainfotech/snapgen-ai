@@ -3,19 +3,35 @@ const Subcategory = require('../models/Subcategory');
 
 exports.createCategory = async (req, res) => {
     try {
-        const category = new Category(req.body);
+        console.log("CREATE CATEGORY HIT");
+        console.log("BODY:", req.body);
+        console.log("FILE:", req.file);
+
+        const categoryData = { ...req.body };
+
+        if (req.file) {
+            categoryData.imageUrl = req.file.path;
+        }
+
+        const category = new Category(categoryData);
         await category.save();
-        res.status(201).json(category);
+
+        res.status(201).json({
+            status: "success",
+            data: category
+        });
     } catch (error) {
-        console.log(error);
-        res.status(400).json({ message: 'Error creating category', error: error.message });
+        console.error("CREATE CATEGORY ERROR:", error);
+        res.status(500).json({
+            message: "Error creating category",
+            error: error.message
+        });
     }
 };
 
+
 exports.getAllCategories = async (req, res) => {
     try {
-        console.log(req.params); // { type: 'image' }
-
         const categories = await Category.find()
             .sort({ createdAt: -1 });
 
@@ -30,8 +46,6 @@ exports.getAllCategories = async (req, res) => {
 
 exports.getCategoriesByType = async (req, res) => {
     try {
-        console.log(req.params); // { type: 'image' }
-
         const { type } = req.params;
         const filter = type ? { type } : {};
 
@@ -50,7 +64,9 @@ exports.getCategoriesByType = async (req, res) => {
 exports.getCategoryById = async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
-        if (!category) return res.status(404).json({ message: 'Category not found' });
+        if (!category) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
         res.json(category);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching category', error: error.message });
@@ -59,24 +75,103 @@ exports.getCategoryById = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
     try {
-        const category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-        if (!category) return res.status(404).json({ message: 'Category not found' });
-        res.json(category);
+        console.log("UPDATE CATEGORY HIT");
+        console.log("PARAM ID:", req.params.id);
+        console.log("BODY:", req.body);
+        console.log("FILE:", req.file);
+
+        const updateData = { ...req.body };
+
+        // If image is uploaded, use Cloudinary URL
+        if (req.file) {
+            updateData.imageUrl = req.file.path; // cloudinary secure_url
+        }
+
+        const category = await Category.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!category) {
+            return res.status(404).json({
+                message: "Category not found"
+            });
+        }
+
+        res.status(200).json({
+            status: "success",
+            message: "Category updated successfully",
+            data: category
+        });
+
     } catch (error) {
-        res.status(400).json({ message: 'Error updating category', error: error.message });
+        console.error("UPDATE CATEGORY ERROR:", error);
+
+        // Cloudinary / Multer error
+        if (error.http_code) {
+            return res.status(error.http_code).json({
+                message: "Image upload failed",
+                error: error.message
+            });
+        }
+
+        res.status(500).json({
+            message: "Error updating category",
+            error: error.message
+        });
     }
 };
 
 exports.deleteCategory = async (req, res) => {
     try {
-        const category = await Category.findByIdAndDelete(req.params.id);
-        if (!category) return res.status(404).json({ message: 'Category not found' });
-        res.json({ message: 'Category deleted successfully' });
+        console.log("DELETE CATEGORY HIT:", req.params.id);
+
+        const category = await Category.findById(req.params.id);
+
+        if (!category) {
+            return res.status(404).json({
+                message: "Category not found"
+            });
+        }
+
+        // 🔥 Delete image from Cloudinary if exists
+        if (category.imageUrl) {
+            try {
+                const publicId = category.imageUrl
+                    .split('/')
+                    .slice(-2)
+                    .join('/')
+                    .split('.')[0];
+
+                console.log("Deleting Cloudinary image:", publicId);
+
+                await cloudinary.uploader.destroy(publicId);
+            } catch (imgErr) {
+                console.error("Cloudinary delete error:", imgErr);
+                // Do NOT block category deletion if image delete fails
+            }
+        }
+
+        await Category.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({
+            status: "success",
+            message: "Category and image deleted successfully"
+        });
+
     } catch (error) {
-        res.status(500).json({ message: 'Error deleting category', error: error.message });
+        console.error("DELETE CATEGORY ERROR:", error);
+
+        res.status(500).json({
+            message: "Error deleting category",
+            error: error.message
+        });
     }
 };
-
 
 exports.getNestedCategories = async (req, res) => {
     try {
@@ -119,3 +214,4 @@ exports.getNestedCategories = async (req, res) => {
         });
     }
 };
+

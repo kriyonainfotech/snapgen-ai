@@ -21,7 +21,6 @@ exports.getAllSubcategories = async (req, res) => {
 
 exports.getSubcategoryById = async (req, res) => {
     try {
-        console.log(req.params);
         const { id } = req.params;
         const subcategory = await Subcategory.find({ category: id }).populate('category');
         if (!subcategory) return res.status(404).json({ message: 'Subcategory not found' });
