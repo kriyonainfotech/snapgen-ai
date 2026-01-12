@@ -14,6 +14,10 @@ const GoogleSubcategorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'GoogleCategory',
         required: true
+    },
+    povId: {
+        type: String,
+        trim: true
     }
 }, { timestamps: true });
 

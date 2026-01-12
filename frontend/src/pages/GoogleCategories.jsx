@@ -13,6 +13,7 @@ const GoogleCategories = () => {
     const [imageFile, setImageFile] = useState(null);
 
     const columns = [
+        { key: "sr.no", label: "Sr.No", render: (val, user, index) => <span className="text-slate-400">{index + 1}</span> },
         {
             key: 'imageUrl',
             label: 'Image',

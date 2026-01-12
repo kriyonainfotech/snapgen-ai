@@ -14,6 +14,10 @@ const SubcategorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
+    },
+    povId: {
+        type: String,
+        trim: true
     }
 }, { timestamps: true });
 

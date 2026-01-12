@@ -408,7 +408,8 @@ exports.checkVideoStatus = async (req, res) => {
                 uid,
                 status: 2, // completed
                 results: [
-                    "https://res.aivio.art/videos/cff0dcd181e2d180a62d1f77a685acb2.mp4"
+                    // "https://res.aivio.art/videos/cff0dcd181e2d180a62d1f77a685acb2.mp4"
+                    "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
                 ]
             }
         };

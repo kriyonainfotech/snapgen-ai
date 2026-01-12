@@ -14,10 +14,12 @@ const Subcategories = () => {
         title: '',
         prompt: '',
         category: '',
-        type: 'image'
+        type: 'image',
+        povId: ''
     });
 
     const columns = [
+        { key: "sr.no", label: "Sr.No", render: (val, user, index) => <span className="text-slate-400">{index + 1}</span> },
         { key: 'title', label: 'Title' },
         {
             key: 'category',
@@ -34,6 +36,7 @@ const Subcategories = () => {
             label: 'Prompt',
             render: (p) => <span className="truncate max-w-xs inline-block">{p}</span>
         },
+        { key: 'povId', label: 'POV ID' },
     ];
 
     const fetchData = async () => {
@@ -76,7 +79,8 @@ const Subcategories = () => {
                 title: sub.title,
                 prompt: sub.prompt,
                 category: sub.category?._id || sub.category,
-                type: subType
+                type: subType,
+                povId: sub.povId || ''
             });
         } else {
             const cats = await fetchCategoriesByType('image');
@@ -85,7 +89,8 @@ const Subcategories = () => {
                 title: '',
                 prompt: '',
                 category: cats[0]?._id || '',
-                type: 'image'
+                type: 'image',
+                povId: ''
             });
         }
         setModalOpen(true);
@@ -204,6 +209,15 @@ const Subcategories = () => {
                             value={formData.prompt}
                             onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none resize-none"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">POV ID</label>
+                        <input
+                            type="text"
+                            value={formData.povId}
+                            onChange={(e) => setFormData({ ...formData, povId: e.target.value })}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none"
                         />
                     </div>
                     <button type="submit" className="w-full py-3 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700">

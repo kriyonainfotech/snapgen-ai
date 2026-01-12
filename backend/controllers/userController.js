@@ -2,17 +2,35 @@ const User = require('../models/User');
 
 exports.createUser = async (req, res) => {
     try {
-        const user = new User(req.body);
-        await user.save();
-        res.status(201).json(user);
+        const { deviceId } = req.body;
+
+        if (!deviceId) {
+            return res.status(400).json({ message: 'deviceId is required' });
+        }
+
+        // Use findOneAndUpdate with upsert: true to handle both create and update
+        const user = await User.findOneAndUpdate(
+            { deviceId },
+            { $set: req.body },
+            {
+                new: true, // Return the modified document
+                upsert: true, // Create a new document if it doesn't exist
+                runValidators: true,
+                setDefaultsOnInsert: true
+            }
+        );
+
+        const status = user.wasNew ? 201 : 200; // Note: wasNew isn't standard in findOneAndUpdate, but we can check records or just return 200/201
+        res.status(200).json(user);
     } catch (error) {
-        res.status(400).json({ message: 'Error creating user', error: error.message });
+        res.status(400).json({ message: 'Error processing user', error: error.message });
     }
 };
 
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find().sort({ createdAt: -1 });
+        console.log("users", users);
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching users', error: error.message });

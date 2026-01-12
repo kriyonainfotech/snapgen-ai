@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        // required: true,
         trim: true
     },
     email: {
         type: String,
-        required: true,
+        // required: true,
         unique: true,
         lowercase: true,
         trim: true
@@ -17,6 +17,18 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
+    },
+    country: {
+        type: String,
+        trim: true
+    },
+    city: {
+        type: String,
+        trim: true
+    },
+    region: {
+        type: String,
+        trim: true
     },
     coins: {
         type: Number,
@@ -27,6 +39,10 @@ const UserSchema = new mongoose.Schema({
         trim: true
     },
     org: {
+        type: String,
+        trim: true
+    },
+    appVersion: {
         type: String,
         trim: true
     },

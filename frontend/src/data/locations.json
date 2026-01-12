@@ -1,0 +1,64 @@
+{
+    "countries": [
+        {
+            "name": "India",
+            "regions": [
+                {
+                    "name": "Gujarat",
+                    "cities": [
+                        "Surat",
+                        "Ahmedabad",
+                        "Vadodara",
+                        "Rajkot"
+                    ]
+                },
+                {
+                    "name": "Maharashtra",
+                    "cities": [
+                        "Mumbai",
+                        "Pune",
+                        "Nagpur",
+                        "Thane"
+                    ]
+                },
+                {
+                    "name": "Delhi",
+                    "cities": [
+                        "New Delhi",
+                        "North Delhi",
+                        "South Delhi"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "USA",
+            "regions": [
+                {
+                    "name": "California",
+                    "cities": [
+                        "Los Angeles",
+                        "San Francisco",
+                        "San Diego"
+                    ]
+                },
+                {
+                    "name": "New York",
+                    "cities": [
+                        "New York City",
+                        "Buffalo",
+                        "Rochester"
+                    ]
+                },
+                {
+                    "name": "Texas",
+                    "cities": [
+                        "Houston",
+                        "Austin",
+                        "Dallas"
+                    ]
+                }
+            ]
+        }
+    ]
+}
