@@ -40,7 +40,7 @@ const Dashboard = () => {
                     api.post('/ai/check-credits')
                 ]);
 
-                console.log("🚀 ~ fetchStats ~ cred:", cred.data)
+                // console.log("🚀 ~ fetchStats ~ cred:", cred.data)
                 const totalUserCoins = u.data.reduce((acc, user) => acc + (user.coins || 0), 0);
 
                 setStats({

@@ -27,11 +27,16 @@ router.post('/update', upload.any(), async (req, res) => {
             settings = new AppSettings();
         }
 
-        const { onboarding, carouselBanners } = req.body;
+        const { onboarding, carouselBanners, faceSwapApiUrl, faceSwapApiKeys, briaApiUrl, briaApiKeys } = req.body;
 
         // Parse JSON strings if they come as strings
         if (onboarding) settings.onboarding = typeof onboarding === 'string' ? JSON.parse(onboarding) : onboarding;
         if (carouselBanners) settings.carouselBanners = typeof carouselBanners === 'string' ? JSON.parse(carouselBanners) : carouselBanners;
+
+        if (faceSwapApiUrl !== undefined) settings.faceSwapApiUrl = faceSwapApiUrl;
+        if (faceSwapApiKeys) settings.faceSwapApiKeys = typeof faceSwapApiKeys === 'string' ? JSON.parse(faceSwapApiKeys) : faceSwapApiKeys;
+        if (briaApiUrl !== undefined) settings.briaApiUrl = briaApiUrl;
+        if (briaApiKeys) settings.briaApiKeys = typeof briaApiKeys === 'string' ? JSON.parse(briaApiKeys) : briaApiKeys;
 
         // Map uploaded files to fields
         if (req.files) {

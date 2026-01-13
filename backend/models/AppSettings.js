@@ -19,7 +19,13 @@ const AppSettingsSchema = new mongoose.Schema({
     imageUpscalerToolImage: { type: String },
     faceSwapToolImage: { type: String },
     undressImageToolImage: { type: String },
-    undressVideoToolImage: { type: String }
+    undressVideoToolImage: { type: String },
+    undressImageIntroBeforeImage: { type: String },
+    undressImageIntroAfterImage: { type: String },
+    faceSwapApiUrl: { type: String },
+    faceSwapApiKeys: [{ type: String }],
+    briaApiUrl: { type: String },
+    briaApiKeys: [{ type: String }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('AppSettings', AppSettingsSchema);

@@ -3,8 +3,6 @@ import api from '../utils/api';
 import DataTable from '../components/DataTable';
 import Modal from '../components/Modal';
 import { Plus, Search, Loader2 } from 'lucide-react';
-import axios from 'axios';
-const API_BASE_URL = 'http://localhost:5000';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
@@ -47,8 +45,8 @@ const Categories = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`${API_BASE_URL}/api/categories/all`);
-            console.log("Categories:", res.data);
+            const res = await api.get('/categories/all');
+            // console.log("Categories:", res.data);
             setCategories(res.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -93,12 +91,12 @@ const Categories = () => {
             }
 
             if (currentCategory) {
-                const response = await axios.put(`${API_BASE_URL}/api/categories/update/${currentCategory._id}`, data, {
+                const response = await api.put(`/categories/update/${currentCategory._id}`, data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 console.log("Response:", response.data);
             } else {
-                const response = await axios.post(`${API_BASE_URL}/api/categories/create`, data, {
+                const response = await api.post('/categories/create', data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 console.log("Response:", response.data);

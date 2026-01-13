@@ -11,7 +11,8 @@ import {
     Search,
     LogOut,
     Smartphone,
-    ExternalLink
+    ExternalLink,
+    Settings
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Cookies from 'js-cookie';
@@ -51,6 +52,7 @@ const Layout = () => {
         { to: '/subcategories', icon: Grid2X2, label: 'Subcategories' },
         { to: '/google-categories', icon: Smartphone, label: 'Google Categories' },
         { to: '/google-subcategories', icon: ExternalLink, label: 'Google Subcategories' },
+        { to: '/settings', icon: Settings, label: 'App Settings' },
     ];
 
     const handleLogout = () => {

@@ -17,6 +17,7 @@ const Users = () => {
         coins: 0,
         isp: '',
         org: '',
+        utm: '',
         country: '',
         city: '',
         region: '',
@@ -28,6 +29,7 @@ const Users = () => {
         country: '',
         region: '',
         city: '',
+        utm: '',
         dateRange: '' // today, yesterday, week, month, year
     });
 
@@ -42,6 +44,7 @@ const Users = () => {
         { key: 'coins', label: 'Coins' },
         { key: 'isp', label: 'ISP' },
         { key: 'org', label: 'Org' },
+        { key: 'utm', label: 'Utm' },
         { key: 'appVersion', label: 'App Ver' },
         {
             key: 'isActive',
@@ -75,11 +78,14 @@ const Users = () => {
         fetchUsers();
     }, []);
 
+    const uniqueUtmValues = [...new Set(users.map(user => user.utm).filter(Boolean))].sort();
+
     const filteredUsers = users.filter(user => {
         // Location Filters
         if (filters.country && user.country !== filters.country) return false;
         if (filters.region && user.region !== filters.region) return false;
         if (filters.city && user.city !== filters.city) return false;
+        if (filters.utm && user.utm !== filters.utm) return false;
 
         // Date Range Filter
         if (filters.dateRange) {
@@ -206,7 +212,7 @@ const Users = () => {
                         <div className="flex items-center gap-3">
                             <h2 className="text-3xl font-bold text-slate-800">User Management</h2>
                             <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-sm font-bold border border-indigo-100">
-                                {filteredUsers.length} of {users.length} Users
+                                {filteredUsers.length} Users
                             </span>
                         </div>
                         <p className="text-slate-500 mt-1 text-sm">Manage app users and their balances.</p>
@@ -280,6 +286,17 @@ const Users = () => {
                         </select>
 
                         <select
+                            value={filters.utm}
+                            onChange={(e) => setFilters({ ...filters, utm: e.target.value })}
+                            className="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-indigo-100"
+                        >
+                            <option value="">UTM Source</option>
+                            {uniqueUtmValues.map(val => (
+                                <option key={val} value={val}>{val}</option>
+                            ))}
+                        </select>
+
+                        <select
                             value={filters.dateRange}
                             onChange={(e) => setFilters({ ...filters, dateRange: e.target.value })}
                             className="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-indigo-100"
@@ -292,10 +309,10 @@ const Users = () => {
                             <option value="year">One Year</option>
                         </select>
 
-                        {(filters.country || filters.region || filters.city || filters.dateRange || searchTerm) && (
+                        {(filters.country || filters.region || filters.city || filters.utm || filters.dateRange || searchTerm) && (
                             <button
                                 onClick={() => {
-                                    setFilters({ country: '', region: '', city: '', dateRange: '' });
+                                    setFilters({ country: '', region: '', city: '', utm: '', dateRange: '' });
                                     setSearchTerm('');
                                 }}
                                 className="flex items-center gap-1 text-red-500 hover:text-red-600 font-bold text-[10px] uppercase px-2"

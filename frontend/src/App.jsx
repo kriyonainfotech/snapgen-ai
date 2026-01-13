@@ -8,6 +8,7 @@ import Subcategories from './pages/Subcategories';
 import GoogleCategories from './pages/GoogleCategories';
 import GoogleSubcategories from './pages/GoogleSubcategories';
 import Login from './pages/Login';
+import AppSettings from './pages/AppSettings';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="subcategories" element={<Subcategories />} />
             <Route path="google-categories" element={<GoogleCategories />} />
             <Route path="google-subcategories" element={<GoogleSubcategories />} />
+            <Route path="settings" element={<AppSettings />} />
           </Route>
         </Route>
 
