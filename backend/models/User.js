@@ -42,6 +42,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    utm: {
+        type: String,
+        trim: true
+    },
     appVersion: {
         type: String,
         trim: true

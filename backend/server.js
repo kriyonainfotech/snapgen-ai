@@ -12,6 +12,7 @@ const subcategoryRoutes = require('./routes/subcategoryRoutes');
 const googleCategoryRoutes = require('./routes/googleCategoryRoutes');
 const googleSubcategoryRoutes = require('./routes/googleSubcategoryRoutes');
 const mainCategoryRoutes = require('./routes/mainCategoryRoutes');
+const appSettingsRoutes = require('./routes/appSettingsRoutes');
 const connectDB = require('./config/db');
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
-    origin: ['http://localhost:5173', "https://snapgenai.vercel.app"],
+    origin: ['http://localhost:5174', "https://snapgenai.vercel.app", "https://shiv.snapgenai.online"],
     credentials: true
 }));
 
@@ -34,6 +35,7 @@ app.use('/api/subcategories', subcategoryRoutes);
 app.use('/api/google-categories', googleCategoryRoutes);
 app.use('/api/google-subcategories', googleSubcategoryRoutes);
 app.use('/api/main-categories', mainCategoryRoutes);
+app.use('/api/app-settings', appSettingsRoutes);
 
 app.use((err, req, res, next) => {
     console.error("GLOBAL ERROR:", err);

@@ -21,6 +21,7 @@ exports.createUser = async (req, res) => {
         );
 
         const status = user.wasNew ? 201 : 200; // Note: wasNew isn't standard in findOneAndUpdate, but we can check records or just return 200/201
+        console.log("user", status, user);
         res.status(200).json(user);
     } catch (error) {
         res.status(400).json({ message: 'Error processing user', error: error.message });
