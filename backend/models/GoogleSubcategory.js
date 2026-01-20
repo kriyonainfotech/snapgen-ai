@@ -18,6 +18,10 @@ const GoogleSubcategorySchema = new mongoose.Schema({
     povId: {
         type: String,
         trim: true
+    },
+    image: {
+        type: String,
+        default: ""
     }
 }, { timestamps: true });
 

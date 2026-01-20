@@ -22,10 +22,14 @@ const AppSettingsSchema = new mongoose.Schema({
     undressVideoToolImage: { type: String },
     undressImageIntroBeforeImage: { type: String },
     undressImageIntroAfterImage: { type: String },
+    IntroImageToVideo: {
+        type: String
+    },
     faceSwapApiUrl: { type: String },
     faceSwapApiKeys: [{ type: String }],
     briaApiUrl: { type: String },
     briaApiKeys: [{ type: String }]
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('AppSettings', AppSettingsSchema);

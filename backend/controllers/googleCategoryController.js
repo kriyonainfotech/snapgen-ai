@@ -1,5 +1,6 @@
 const GoogleCategory = require('../models/GoogleCategory');
 const GoogleSubcategory = require('../models/GoogleSubcategory');
+const { deleteImageFromCloudinary } = require('../utils/imageCleanup');
 
 exports.createCategory = async (req, res) => {
     try {
@@ -60,6 +61,10 @@ exports.updateCategory = async (req, res) => {
     try {
         const updateData = { ...req.body };
         if (req.file) {
+            const oldCategory = await GoogleCategory.findById(req.params.id);
+            if (oldCategory && oldCategory.imageUrl) {
+                await deleteImageFromCloudinary(oldCategory.imageUrl);
+            }
             updateData.imageUrl = req.file.path;
         }
         const category = await GoogleCategory.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
@@ -72,8 +77,14 @@ exports.updateCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     try {
-        const category = await GoogleCategory.findByIdAndDelete(req.params.id);
+        const category = await GoogleCategory.findById(req.params.id);
         if (!category) return res.status(404).json({ message: 'Google Category not found' });
+
+        if (category.imageUrl) {
+            await deleteImageFromCloudinary(category.imageUrl);
+        }
+
+        await GoogleCategory.findByIdAndDelete(req.params.id);
         res.json({ message: 'Google Category deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting google category', error: error.message });

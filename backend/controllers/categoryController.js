@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 const Subcategory = require('../models/Subcategory');
+const { deleteImageFromCloudinary } = require('../utils/imageCleanup');
 
 exports.createCategory = async (req, res) => {
     try {
@@ -84,6 +85,11 @@ exports.updateCategory = async (req, res) => {
 
         // If image is uploaded, use Cloudinary URL
         if (req.file) {
+            // 🔥 Delete old image if it exists
+            const oldCategory = await Category.findById(req.params.id);
+            if (oldCategory && oldCategory.imageUrl) {
+                await deleteImageFromCloudinary(oldCategory.imageUrl);
+            }
             updateData.imageUrl = req.file.path; // cloudinary secure_url
         }
 
@@ -140,20 +146,7 @@ exports.deleteCategory = async (req, res) => {
 
         // 🔥 Delete image from Cloudinary if exists
         if (category.imageUrl) {
-            try {
-                const publicId = category.imageUrl
-                    .split('/')
-                    .slice(-2)
-                    .join('/')
-                    .split('.')[0];
-
-                console.log("Deleting Cloudinary image:", publicId);
-
-                await cloudinary.uploader.destroy(publicId);
-            } catch (imgErr) {
-                console.error("Cloudinary delete error:", imgErr);
-                // Do NOT block category deletion if image delete fails
-            }
+            await deleteImageFromCloudinary(category.imageUrl);
         }
 
         await Category.findByIdAndDelete(req.params.id);
