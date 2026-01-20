@@ -14,6 +14,7 @@ const AppSettings = () => {
         undressVideoToolImage: '',
         undressImageIntroBeforeImage: '',
         undressImageIntroAfterImage: '',
+        IntroImageToVideo: '',
         faceSwapApiUrl: '',
         faceSwapApiKeys: [],
         briaApiUrl: '',
@@ -414,13 +415,25 @@ const AppSettings = () => {
                         { key: 'undressImageToolImage', label: 'Undress Img' },
                         { key: 'undressVideoToolImage', label: 'Undress Vid' },
                         { key: 'undressImageIntroBeforeImage', label: 'Undress Intro Before' },
-                        { key: 'undressImageIntroAfterImage', label: 'Undress Intro After' }
+                        { key: 'undressImageIntroAfterImage', label: 'Undress Intro After' },
+                        { key: 'IntroImageToVideo', label: 'Intro Img To Vid', type: 'video' }
                     ].map((tool) => (
                         <div key={tool.key} className="space-y-3 p-3 bg-slate-50/50 rounded-2xl border border-slate-100 group">
                             <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider text-center">{tool.label}</label>
                             <div className="relative aspect-square w-20 mx-auto bg-white rounded-xl border-2 border-dashed border-slate-200 overflow-hidden group/img shadow-sm hover:border-indigo-300 transition-colors">
                                 {(previews[tool.key] || settings[tool.key]) ? (
-                                    <img src={previews[tool.key] || settings[tool.key]} alt="Tool" className="w-full h-full object-contain p-4" />
+                                    tool.type === 'video' ? (
+                                        <video
+                                            src={previews[tool.key] || settings[tool.key]}
+                                            className="w-full h-full object-contain p-2"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                        />
+                                    ) : (
+                                        <img src={previews[tool.key] || settings[tool.key]} alt="Tool" className="w-full h-full object-contain p-4" />
+                                    )
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-full text-slate-400">
                                         <ImageIcon size={24} strokeWidth={1.5} />
@@ -428,7 +441,12 @@ const AppSettings = () => {
                                 )}
                                 <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                                     <Upload className="text-white" size={20} />
-                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, tool.key)} />
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept={tool.type === 'video' ? "video/*" : "image/*"}
+                                        onChange={(e) => handleFileChange(e, tool.key)}
+                                    />
                                 </label>
                             </div>
                         </div>

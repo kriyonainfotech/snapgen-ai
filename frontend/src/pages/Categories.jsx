@@ -12,17 +12,26 @@ const Categories = () => {
     const [currentCategory, setCurrentCategory] = useState(null);
     const [formData, setFormData] = useState({ title: '', type: 'image', mainCategory: '' });
     const [imageFile, setImageFile] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
+    const [viewModalOpen, setViewModalOpen] = useState(false);
+    const [viewData, setViewData] = useState(null);
 
     const columns = [
         { key: "sr.no", label: "Sr.No", render: (val, user, index) => <span className="text-slate-400">{index + 1}</span> },
         {
             key: 'imageUrl',
-            label: 'Image',
-            render: (val) => val ? (
-                <img src={val} alt="Category" className="h-10 w-10 rounded-lg object-cover border border-slate-200" />
-            ) : (
-                <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-[10px] font-bold">NO IMG</div>
-            )
+            label: 'Asset',
+            render: (val, row) => {
+                if (!val) return <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-[10px] font-bold">NO FILE</div>;
+                if (row.type === 'video') {
+                    return (
+                        <div className="h-10 w-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100">
+                            <video src={val} className="h-full w-full object-cover rounded-lg" crossOrigin="anonymous" preload="metadata" />
+                        </div>
+                    );
+                }
+                return <img src={val} alt="Category" className="h-10 w-10 rounded-lg object-cover border border-slate-200" />;
+            }
         },
         { key: 'title', label: 'Title' },
         {
@@ -79,9 +88,17 @@ const Categories = () => {
         setModalOpen(true);
     };
 
+    const handleView = (data) => {
+        setViewData(data);
+        setViewModalOpen(true);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (submitting) return;
+
         try {
+            setSubmitting(true);
             const data = new FormData();
             data.append('title', formData.title);
             data.append('type', formData.type);
@@ -91,20 +108,20 @@ const Categories = () => {
             }
 
             if (currentCategory) {
-                const response = await api.put(`/categories/update/${currentCategory._id}`, data, {
+                await api.put(`/categories/update/${currentCategory._id}`, data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                console.log("Response:", response.data);
             } else {
-                const response = await api.post('/categories/create', data, {
+                await api.post('/categories/create', data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                console.log("Response:", response.data);
             }
             setModalOpen(false);
             fetchCategories();
         } catch (error) {
             console.error('Error saving category:', error);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -151,6 +168,7 @@ const Categories = () => {
                         data={categories}
                         onEdit={handleOpenModal}
                         onDelete={handleDelete}
+                        onView={handleView}
                     />
                 )}
             </div>
@@ -178,24 +196,68 @@ const Categories = () => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Category Image</label>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Category Asset ({formData.type})</label>
                         <input
                             type="file"
-                            accept="image/*"
+                            accept={formData.type === 'video' ? 'video/*' : 'image/*'}
                             onChange={(e) => setImageFile(e.target.files[0])}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none"
                         />
-                        {currentCategory?.imageUrl && !imageFile && (
-                            <div className="mt-2">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Current Image:</p>
-                                <img src={currentCategory.imageUrl} alt="Current" className="h-20 w-20 rounded-lg object-cover border border-slate-200" />
+                        {(imageFile || currentCategory?.imageUrl) && (
+                            <div className="mt-2 text-center">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Preview:</p>
+                                {formData.type === 'video' ? (
+                                    <video
+                                        src={imageFile ? URL.createObjectURL(imageFile) : currentCategory?.imageUrl}
+                                        controls
+                                        crossOrigin="anonymous"
+                                        preload="metadata"
+                                        className="h-32 w-full max-w-[200px] mx-auto rounded-lg object-cover border border-slate-200"
+                                    />
+                                ) : (
+                                    <img
+                                        src={imageFile ? URL.createObjectURL(imageFile) : currentCategory?.imageUrl}
+                                        alt="Preview"
+                                        className="h-20 w-20 mx-auto rounded-lg object-cover border border-slate-200"
+                                    />
+                                )}
                             </div>
                         )}
                     </div>
-                    <button type="submit" className="w-full py-3 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700">
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full py-3 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                        {submitting && <Loader2 className="animate-spin" size={18} />}
                         {currentCategory ? 'Update' : 'Create'}
                     </button>
                 </form>
+            </Modal>
+
+            <Modal isOpen={viewModalOpen} onClose={() => setViewModalOpen(false)} title={`View: ${viewData?.title}`}>
+                <div className="flex flex-col items-center gap-4">
+                    {viewData?.type === 'video' ? (
+                        <video
+                            src={viewData?.imageUrl}
+                            controls
+                            autoPlay
+                            crossOrigin="anonymous"
+                            preload="auto"
+                            className="w-full rounded-2xl border border-slate-100 shadow-xl"
+                        />
+                    ) : (
+                        <img
+                            src={viewData?.imageUrl}
+                            alt={viewData?.title}
+                            className="w-full rounded-2xl border border-slate-100 shadow-xl object-contain max-h-[70vh]"
+                        />
+                    )}
+                    <div className="text-center">
+                        <h4 className="text-lg font-bold text-slate-800 uppercase tracking-tight">{viewData?.title}</h4>
+                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{viewData?.type}</p>
+                    </div>
+                </div>
             </Modal>
         </div>
     );
